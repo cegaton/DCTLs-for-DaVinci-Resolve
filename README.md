@@ -1,6 +1,7 @@
 # DCTL
 DCTLs for DaVinci Resolve.
-Place in the LUT directory for resolve 
+Place in the LUT directory for resolve.
+
 Linux: /opt/resolve/LUT
 MacOS: /Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT
 Windows: C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\LUT
