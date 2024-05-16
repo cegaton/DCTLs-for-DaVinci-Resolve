@@ -1,5 +1,5 @@
 //Display individual channels as monochrome
-//Display channels combined in color
+//Display combined channels in color
 
 DEFINE_UI_PARAMS(p_DisplayR, Red, DCTLUI_CHECK_BOX, 0)
 DEFINE_UI_PARAMS(p_DisplayG, Green, DCTLUI_CHECK_BOX, 0)
