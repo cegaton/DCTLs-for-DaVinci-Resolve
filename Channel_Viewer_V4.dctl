@@ -1,0 +1,47 @@
+/*
+    Channel Viewer (Individual Channels in Monochrome or Color)
+
+    Version 005
+*/
+
+DEFINE_UI_PARAMS(p_DisplayR, Red, DCTLUI_CHECK_BOX, 0)
+DEFINE_UI_PARAMS(p_DisplayG, Green, DCTLUI_CHECK_BOX, 0)
+DEFINE_UI_PARAMS(p_DisplayB, Blue, DCTLUI_CHECK_BOX, 0)
+DEFINE_UI_PARAMS(p_ColorMode, Display in Color, DCTLUI_CHECK_BOX, 0)
+
+__DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B) {
+    float3 out = make_float3(0); // Initialize output to black
+
+    // Count how many channels are selected
+    int count = (p_DisplayR == 1) + (p_DisplayG == 1) + (p_DisplayB == 1);
+
+    if (p_ColorMode == 1) {
+        // Color mode: display selected channels in their respective colors
+        if (p_DisplayR == 1) {
+            out.x = p_R; // Red channel in red color
+        }
+        if (p_DisplayG == 1) {
+            out.y = p_G; // Green channel in green color
+        }
+        if (p_DisplayB == 1) {
+            out.z = p_B; // Blue channel in blue color
+        }
+    } else {
+        // Monochrome mode: display selected channels as grayscale
+        if (p_DisplayR == 1) {
+            out += make_float3(p_R, p_R, p_R); // Red channel in grayscale
+        }
+        if (p_DisplayG == 1) {
+            out += make_float3(p_G, p_G, p_G); // Green channel in grayscale
+        }
+        if (p_DisplayB == 1) {
+            out += make_float3(p_B, p_B, p_B); // Blue channel in grayscale
+        }
+
+        if (count > 1) {
+            out /= count; // Average the channels in grayscale
+        }
+    }
+
+    return out;
+}

@@ -1,0 +1,46 @@
+/* 
+    Set Min and Max Values per channel
+    Added contrast and pivot controls for each channel 
+    */
+
+DEFINE_UI_PARAMS(minR, Min Red, DCTLUI_SLIDER_FLOAT, 0.0, -1.0, 1.0, 0.01)
+DEFINE_UI_PARAMS(maxR, Max Red, DCTLUI_SLIDER_FLOAT, 1.0, 0.0, 2.0, 0.01)
+DEFINE_UI_PARAMS(contrastR, Red Contrast, DCTLUI_SLIDER_FLOAT, 1.0, 0.1, 3.0, 0.01)
+DEFINE_UI_PARAMS(pivotR, Red Pivot, DCTLUI_SLIDER_FLOAT, 0.435, 0.0, 1.0, 0.01)
+
+DEFINE_UI_PARAMS(minG, Min Green, DCTLUI_SLIDER_FLOAT, 0.0, -1.0, 1.0, 0.01)
+DEFINE_UI_PARAMS(maxG, Max Green, DCTLUI_SLIDER_FLOAT, 1.0, 0.0, 2.0, 0.01)
+DEFINE_UI_PARAMS(contrastG, Green Contrast, DCTLUI_SLIDER_FLOAT, 1.0, 0.1, 3.0, 0.01)
+DEFINE_UI_PARAMS(pivotG, Green Pivot, DCTLUI_SLIDER_FLOAT, 0.435, 0.0, 1.0, 0.01)
+
+DEFINE_UI_PARAMS(minB, Min Blue, DCTLUI_SLIDER_FLOAT, 0.0, -1.0, 1.0, 0.01)
+DEFINE_UI_PARAMS(maxB, Max Blue, DCTLUI_SLIDER_FLOAT, 1.0, 0.0, 2.0, 0.01)
+DEFINE_UI_PARAMS(contrastB, Blue Contrast, DCTLUI_SLIDER_FLOAT, 1.0, 0.1, 3.0, 0.01)
+DEFINE_UI_PARAMS(pivotB, Blue Pivot, DCTLUI_SLIDER_FLOAT, 0.435, 0.0, 1.0, 0.01)
+
+/* Master Controls */
+DEFINE_UI_PARAMS(minMaster, Min Master, DCTLUI_SLIDER_FLOAT, 0.0, -1.0, 1.0, 0.01)
+DEFINE_UI_PARAMS(maxMaster, Max Master, DCTLUI_SLIDER_FLOAT, 1.0, 0.0, 2.0, 0.01)
+DEFINE_UI_PARAMS(contrastMaster, Master Contrast, DCTLUI_SLIDER_FLOAT, 1.0, 0.1, 3.0, 0.01)
+DEFINE_UI_PARAMS(pivotMaster, Master Pivot, DCTLUI_SLIDER_FLOAT, 0.435, 0.0, 1.0, 0.01)
+
+__DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B){
+    float3 pixel = make_float3(p_R, p_G, p_B);
+    float3 out = pixel;
+    
+    // Per-channel transformations
+    out.x = (out.x - minR) / (maxR - minR); 
+    out.x = contrastR * (out.x - pivotR) + pivotR;
+    
+    out.y = (out.y - minG) / (maxG - minG); 
+    out.y = contrastG * (out.y - pivotG) + pivotG;
+    
+    out.z = (out.z - minB) / (maxB - minB); 
+    out.z = contrastB * (out.z - pivotB) + pivotB;
+    
+    // Master transformations
+    out = (out - make_float3(minMaster)) / (maxMaster - minMaster);
+    out = contrastMaster * (out - make_float3(pivotMaster)) + make_float3(pivotMaster);
+    
+    return out;
+}

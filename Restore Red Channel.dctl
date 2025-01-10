@@ -1,0 +1,28 @@
+/*
+Use residual color by side absorption to restore the red channel
+in film with cyan dye bleaching
+Based on Grigorio Trumpy and Barbara Flueckiger
+"Dye Purification: An Image-Processing Technique for the Digital Restoration of Chromogenic Film"
+2018
+*/
+
+DEFINE_UI_PARAMS(cf1, cf1, DCTLUI_SLIDER_FLOAT, 0.5, 0.0, 1.0, 0.01)
+DEFINE_UI_PARAMS(cf2, cf2, DCTLUI_SLIDER_FLOAT, 0.5, 0.0, 1.0, 0.01)
+DEFINE_UI_PARAMS(cf3, cf3, DCTLUI_SLIDER_FLOAT, 0.5, 0.0, 1.0, 0.01)
+
+__DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B){
+    float3 pixel = make_float3(p_R, p_G, p_B);
+    float3 out = pixel;
+
+    // Step 1: Calculate the residual information for the cyan (related to red) channel
+    float residual_cyan = max(0.0f, (1.0f - p_B) - cf1 * p_G);
+
+    // Step 2: Use the residual cyan information to adjust the red channel
+    out.x = max(0.0f, (1.0f - p_R) - cf2 * residual_cyan);  // Red channel restoration
+
+    // Step 3: Maintain the green and blue channels unchanged
+    out.y = p_G;   // Green channel remains unchanged
+    out.z = p_B;   // Blue channel remains unchanged
+
+    return out;
+}
